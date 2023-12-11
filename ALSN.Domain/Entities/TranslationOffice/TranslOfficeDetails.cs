@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +10,8 @@ namespace ALSN.Domain.Entities.TranslationOffice
 {
     public class TranslOfficeDetails
     {
-        public int id { get; set; }
+        [Key]
+        public int Detailid { get; set; }
         public int commissionPercentage { get; set; }
         public string accountNumber { get; set; }
         public string accountHolderName { get; set; }
@@ -17,7 +20,8 @@ namespace ALSN.Domain.Entities.TranslationOffice
         public string bankAddress { get; set; }
 
         //nav prop
-        public string TransOfficeId { get; set; }
-        public TranslOffice transOffices { get; set; }
+        [ForeignKey("transOffice")]
+        public string TranslOfficeId { get; set; }
+        public TranslOffice transOffice { get; set; }
     }
 }

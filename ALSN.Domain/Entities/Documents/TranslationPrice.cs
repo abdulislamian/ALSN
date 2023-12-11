@@ -15,7 +15,8 @@ namespace ALSN.Domain.Entities.Documents
         public int price { get; set; }
 
         //nav props
-        public int documentTypeId { get; set; }
+        [ForeignKey("DocumentsType")]
+        public int DocTypeId { get; set; }
         public DocumentsType DocumentsType { get; set; }
     }
 }

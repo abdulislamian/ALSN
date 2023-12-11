@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
@@ -18,7 +19,8 @@ namespace ALSN.Domain.Entities.Translator
         public int BranchCode { get; set; }
         public string BankAddress { get; set; }
         //Navi prop
+        [ForeignKey("translator")]
         public string TranslatorId { get; set; }
-        public Translator translator { get; set; }
+        public Translators translator { get; set; }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using ALSN.Domain.Entities.Guest.Translation;
+using ALSN.Domain.Entities.Translator;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ALSN.Domain.Entities.Documents
 {
@@ -10,9 +12,12 @@ namespace ALSN.Domain.Entities.Documents
         public int rating { get; set; }
 
         //nav prop
-        public int translationId { get; set; }
-        public Translation Translation { get; set; }
-        public int TranslatorId { get; set; }
-        public ALSN.Domain.Entities.Translator.Translator Translator { get; set; }
+        [ForeignKey("translations")]
+        public int TranslationId { get; set; }
+        public Translation translations { get; set; }
+        
+        [ForeignKey("translators")]
+        public string TranslatorId { get; set; }
+        public Translators translators { get; set; }
     }
 }

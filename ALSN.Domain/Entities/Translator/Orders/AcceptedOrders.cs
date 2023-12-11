@@ -1,23 +1,21 @@
 ﻿using ALSN.Domain.Entities.Guest.Translation;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ALSN.Domain.Entities.Translator.Orders
 {
     public class AcceptedOrders
     {
         [Key]
-        public int Id { get; set; }
+        public int AcceptId { get; set; }
         //NAV PROPS
+        [ForeignKey("translation")]
         public int TranslationId { get; set; }
         public Translation translation { get; set; }
-
-        public int TranslatorId { get; set; }
-        public Translator translator { get; set; }
+        
+        [ForeignKey("translators")]
+        public string translatorId { get; set; }
+        public Translators translators { get; set; }
 
     }
 }

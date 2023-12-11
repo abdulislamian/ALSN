@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ALSN.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231207123532_intialDBMigration")]
-    partial class intialDBMigration
+    [Migration("20231210072050_IntialMigration")]
+    partial class IntialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,8 +27,11 @@ namespace ALSN.Infrastructure.Migrations
 
             modelBuilder.Entity("ALSN.Domain.Entities.Documents.DocumentsType", b =>
                 {
-                    b.Property<int>("DocTypeId")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("documentName")
                         .IsRequired()
@@ -43,9 +46,9 @@ namespace ALSN.Infrastructure.Migrations
                     b.Property<int>("price")
                         .HasColumnType("int");
 
-                    b.HasKey("DocTypeId");
+                    b.HasKey("Id");
 
-                    b.ToTable("DocumentsTypes");
+                    b.ToTable("DocumentsType");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Documents.Feedback", b =>
@@ -56,8 +59,12 @@ namespace ALSN.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FeedbackId"));
 
-                    b.Property<int>("TranslatorId")
+                    b.Property<int>("TranslationId")
                         .HasColumnType("int");
+
+                    b.Property<string>("TranslatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("rating")
                         .HasColumnType("int");
@@ -70,18 +77,13 @@ namespace ALSN.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("translationId")
-                        .HasColumnType("int");
-
                     b.HasKey("FeedbackId");
 
-                    b.HasIndex("TranslatorId")
-                        .IsUnique();
+                    b.HasIndex("TranslationId");
 
-                    b.HasIndex("translationId")
-                        .IsUnique();
+                    b.HasIndex("TranslatorId");
 
-                    b.ToTable("feedbacks");
+                    b.ToTable("feedback");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Documents.TranslationPrice", b =>
@@ -92,7 +94,7 @@ namespace ALSN.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TranslationPriceId"));
 
-                    b.Property<int>("documentTypeId")
+                    b.Property<int>("DocTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("price")
@@ -108,44 +110,9 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.HasKey("TranslationPriceId");
 
-                    b.ToTable("translationPrices");
-                });
+                    b.HasIndex("DocTypeId");
 
-            modelBuilder.Entity("ALSN.Domain.Entities.Guest.Guest", b =>
-                {
-                    b.Property<int>("GuestId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GuestId"));
-
-                    b.Property<string>("ConfirmPassword")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LocalizationLanguage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("GuestId");
-
-                    b.ToTable("Guests");
+                    b.ToTable("translationPrice");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Guest.Tickets.Ticket", b =>
@@ -167,8 +134,9 @@ namespace ALSN.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GuestId")
-                        .HasColumnType("int");
+                    b.Property<string>("GuestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -214,7 +182,7 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Addresses");
+                    b.ToTable("Address");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Guest.Translation.Translation", b =>
@@ -235,7 +203,7 @@ namespace ALSN.Infrastructure.Migrations
                     b.Property<decimal>("DiscountAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("DocumentRequestTypeDocTypeId")
+                    b.Property<int>("DocumentRequestTypeId")
                         .HasColumnType("int");
 
                     b.Property<int>("DocumentType")
@@ -244,8 +212,9 @@ namespace ALSN.Infrastructure.Migrations
                     b.Property<int>("DocumentTypeId")
                         .HasColumnType("int");
 
-                    b.Property<int>("GuestId")
-                        .HasColumnType("int");
+                    b.Property<string>("GuestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsAmendmentRequested")
                         .HasColumnType("bit");
@@ -303,7 +272,7 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.HasKey("TranslationRequestId");
 
-                    b.HasIndex("DocumentRequestTypeDocTypeId");
+                    b.HasIndex("DocumentRequestTypeId");
 
                     b.HasIndex("GuestId");
 
@@ -311,31 +280,7 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.HasIndex("TranslationPriceId");
 
-                    b.ToTable("Translations");
-                });
-
-            modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.DeliveryService.ServiceCategory", b =>
-                {
-                    b.Property<int>("serviceCatId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("serviceCatId"));
-
-                    b.Property<string>("RequiredTime")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<double>("ServiceFee")
-                        .HasColumnType("float");
-
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("serviceCatId");
-
-                    b.ToTable("serviceCategories");
+                    b.ToTable("Translation");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.Order.OrderAssign", b =>
@@ -349,71 +294,30 @@ namespace ALSN.Infrastructure.Migrations
                     b.Property<int>("TranslationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TranslatorId")
-                        .HasColumnType("int");
+                    b.Property<string>("TranslatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("assignId");
 
-                    b.HasIndex("TranslationId")
-                        .IsUnique();
+                    b.HasIndex("TranslationId");
 
-                    b.HasIndex("TranslatorId")
-                        .IsUnique();
+                    b.HasIndex("TranslatorId");
 
-                    b.ToTable("orderAssigns");
-                });
-
-            modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.TranslOffice", b =>
-                {
-                    b.Property<int>("OfficeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OfficeId"));
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompOwnerName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("CompanyName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ContactNo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("LocalizationLanguage")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TotalNoOfTranslators")
-                        .HasColumnType("int");
-
-                    b.HasKey("OfficeId");
-
-                    b.ToTable("translOffices");
+                    b.ToTable("orderAssign");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.TranslOfficeDetails", b =>
                 {
-                    b.Property<int>("id")
+                    b.Property<int>("Detailid")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Detailid"));
 
-                    b.Property<string>("TransOfficeId")
+                    b.Property<string>("TranslOfficeId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("accountHolderName")
                         .IsRequired()
@@ -438,12 +342,9 @@ namespace ALSN.Infrastructure.Migrations
                     b.Property<int>("commissionPercentage")
                         .HasColumnType("int");
 
-                    b.Property<int>("transOfficesOfficeId")
-                        .HasColumnType("int");
+                    b.HasKey("Detailid");
 
-                    b.HasKey("id");
-
-                    b.HasIndex("transOfficesOfficeId");
+                    b.HasIndex("TranslOfficeId");
 
                     b.ToTable("translOfficeDetails");
                 });
@@ -477,14 +378,11 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.Property<string>("TranslatorId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TranslatorId1")
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("bankDetailId");
 
-                    b.HasIndex("TranslatorId1");
+                    b.HasIndex("TranslatorId");
 
                     b.ToTable("bankDetails");
                 });
@@ -508,35 +406,36 @@ namespace ALSN.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TranslatorId")
-                        .HasColumnType("int");
+                    b.Property<string>("TranslatorsId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("LanguageId");
 
-                    b.HasIndex("TranslatorId");
+                    b.HasIndex("TranslatorsId");
 
-                    b.ToTable("languages");
+                    b.ToTable("language");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Translator.Orders.AcceptedOrders", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("AcceptId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AcceptId"));
 
                     b.Property<int>("TranslationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TranslatorId")
-                        .HasColumnType("int");
+                    b.Property<string>("translatorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("AcceptId");
 
                     b.HasIndex("TranslationId");
 
-                    b.HasIndex("TranslatorId");
+                    b.HasIndex("translatorId");
 
                     b.ToTable("acceptedOrders");
                 });
@@ -564,20 +463,35 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.HasIndex("TranslationId");
 
-                    b.ToTable("rejectOrders");
+                    b.ToTable("rejectOrder");
                 });
 
-            modelBuilder.Entity("ALSN.Domain.Entities.Translator.Translator", b =>
+            modelBuilder.Entity("ALSN.Domain.Entities.User.ApplicationUser", b =>
                 {
-                    b.Property<int>("TranslatorId")
-                        .ValueGeneratedOnAdd()
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TranslatorId"));
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Email")
+                    b.Property<string>("ContactNo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
                     b.Property<string>("FullName")
                         .IsRequired()
@@ -587,25 +501,73 @@ namespace ALSN.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phone")
-                        .IsRequired()
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TransOfficeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TranslOfficeOfficeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("fullAddress")
-                        .IsRequired()
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("TranslatorId");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-                    b.HasIndex("TranslOfficeOfficeId");
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.ToTable("Translators");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
+
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
+
+                    b.UseTphMappingStrategy();
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "509b7411-1122-49be-a5d6-e616adaf79cd",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "da4d791f-59fd-48f0-92e0-b049a2c4b45a",
+                            ContactNo = "03149276066",
+                            Email = "sample.applicationuser@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Abdullah Khan",
+                            LocalizationLanguage = "English",
+                            LockoutEnabled = false,
+                            PasswordHash = "hashed_password_here",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "97837b56-c737-49fc-9537-8da50cf7444c",
+                            TwoFactorEnabled = false,
+                            UserName = "sample.applicationuser"
+                        });
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.User.Coupons.Coupons", b =>
@@ -618,7 +580,7 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("couponCode")
                         .IsRequired()
@@ -633,9 +595,6 @@ namespace ALSN.Infrastructure.Migrations
                     b.Property<int>("minimumOrderAmount")
                         .HasColumnType("int");
 
-                    b.Property<int>("usersUserId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("validFrom")
                         .HasColumnType("datetime2");
 
@@ -644,98 +603,278 @@ namespace ALSN.Infrastructure.Migrations
 
                     b.HasKey("CouponId");
 
-                    b.HasIndex("usersUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Coupons");
                 });
 
-            modelBuilder.Entity("ALSN.Domain.Entities.User.Role", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
-                    b.Property<int>("RoleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleId"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.HasKey("RoleId");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                    b.ToTable("Roles");
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("ALSN.Domain.Entities.User.User", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("RoleId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("RolesRoleId")
-                        .HasColumnType("int");
+                    b.HasKey("Id");
 
-                    b.Property<string>("country")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasIndex("RoleId");
 
-                    b.Property<string>("fullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("phone")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("RolesRoleId");
-
-                    b.ToTable("Users");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
-            modelBuilder.Entity("ALSN.Domain.Entities.Documents.DocumentsType", b =>
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("ALSN.Domain.Entities.Documents.TranslationPrice", "TranslationPrice")
-                        .WithOne("DocumentsType")
-                        .HasForeignKey("ALSN.Domain.Entities.Documents.DocumentsType", "DocTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Navigation("TranslationPrice");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("AspNetUserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("RoleId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("AspNetUserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("ALSN.Domain.Entities.Guest.Guest", b =>
+                {
+                    b.HasBaseType("ALSN.Domain.Entities.User.ApplicationUser");
+
+                    b.HasDiscriminator().HasValue("Guest");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "ac1c3372-432d-41b8-b86a-87feb2cf846a",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "5dc4315c-17d2-4ff1-be8b-16fa9d76090e",
+                            ContactNo = "03149276066",
+                            Email = "sample.guest@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Sample Guest",
+                            LocalizationLanguage = "English",
+                            LockoutEnabled = false,
+                            PasswordHash = "hashed_password_here",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "fe7e087a-9738-4d1e-9639-3289b6815465",
+                            TwoFactorEnabled = false
+                        });
+                });
+
+            modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.TranslOffice", b =>
+                {
+                    b.HasBaseType("ALSN.Domain.Entities.User.ApplicationUser");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompOwnerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TotalNoOfTranslators")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("TranslOffice");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "e580075e-6b2c-439a-b164-e001877962d6",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "ad4d7305-6efc-434b-b5e6-207342e0ff29",
+                            ContactNo = "03149276066",
+                            Email = "sample.officer@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Sample Translation Officer",
+                            LocalizationLanguage = "English",
+                            LockoutEnabled = false,
+                            PasswordHash = "hashed_password_here",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "ec9bbbfe-94da-4848-a0ab-a9ac05b3c4ed",
+                            TwoFactorEnabled = false,
+                            City = "Peshawar",
+                            CompOwnerName = "ABC",
+                            CompanyName = "XYZ company",
+                            TotalNoOfTranslators = 0
+                        });
+                });
+
+            modelBuilder.Entity("ALSN.Domain.Entities.Translator.Translators", b =>
+                {
+                    b.HasBaseType("ALSN.Domain.Entities.User.ApplicationUser");
+
+                    b.Property<string>("TransOfficeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("fullAddress")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasIndex("TransOfficeId");
+
+                    b.HasDiscriminator().HasValue("Translators");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "0fe6fa9e-152d-49d4-8ba6-ceb6875294f3",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "eca1d256-b474-4a5a-9a67-1e428889dff3",
+                            ContactNo = "03149276066",
+                            Email = "sample.translator@example.com",
+                            EmailConfirmed = false,
+                            FullName = "Sample Translator",
+                            LocalizationLanguage = "English",
+                            LockoutEnabled = false,
+                            PasswordHash = "hashed_password_here",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "4b62674c-bf52-4c15-b07f-4e6e1cbf17b7",
+                            TwoFactorEnabled = false,
+                            TransOfficeId = "e580075e-6b2c-439a-b164-e001877962d6",
+                            fullAddress = "Xyz Address"
+                        });
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Documents.Feedback", b =>
                 {
-                    b.HasOne("ALSN.Domain.Entities.Translator.Translator", "Translator")
-                        .WithOne("feedback")
-                        .HasForeignKey("ALSN.Domain.Entities.Documents.Feedback", "TranslatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("ALSN.Domain.Entities.Guest.Translation.Translation", "translations")
+                        .WithMany()
+                        .HasForeignKey("TranslationId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ALSN.Domain.Entities.Guest.Translation.Translation", "Translation")
-                        .WithOne("feedback")
-                        .HasForeignKey("ALSN.Domain.Entities.Documents.Feedback", "translationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("ALSN.Domain.Entities.Translator.Translators", "translators")
+                        .WithMany()
+                        .HasForeignKey("TranslatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Translation");
+                    b.Navigation("translations");
 
-                    b.Navigation("Translator");
+                    b.Navigation("translators");
+                });
+
+            modelBuilder.Entity("ALSN.Domain.Entities.Documents.TranslationPrice", b =>
+                {
+                    b.HasOne("ALSN.Domain.Entities.Documents.DocumentsType", "DocumentsType")
+                        .WithMany()
+                        .HasForeignKey("DocTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("DocumentsType");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Guest.Tickets.Ticket", b =>
@@ -743,7 +882,7 @@ namespace ALSN.Infrastructure.Migrations
                     b.HasOne("ALSN.Domain.Entities.Guest.Guest", "Guest")
                         .WithMany("Tickets")
                         .HasForeignKey("GuestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Guest");
@@ -753,20 +892,20 @@ namespace ALSN.Infrastructure.Migrations
                 {
                     b.HasOne("ALSN.Domain.Entities.Documents.DocumentsType", "DocumentRequestType")
                         .WithMany()
-                        .HasForeignKey("DocumentRequestTypeDocTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("DocumentRequestTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ALSN.Domain.Entities.Guest.Guest", "Guest")
                         .WithMany()
                         .HasForeignKey("GuestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ALSN.Domain.Entities.Guest.Translation.Address", "RequestDeliveryAddresss")
                         .WithMany()
                         .HasForeignKey("RequestDeliveryAddresssId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ALSN.Domain.Entities.Documents.TranslationPrice", "translationPrice")
@@ -787,15 +926,15 @@ namespace ALSN.Infrastructure.Migrations
             modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.Order.OrderAssign", b =>
                 {
                     b.HasOne("ALSN.Domain.Entities.Guest.Translation.Translation", "translation")
-                        .WithOne("OrderAssign")
-                        .HasForeignKey("ALSN.Domain.Entities.TranslationOffice.Order.OrderAssign", "TranslationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany()
+                        .HasForeignKey("TranslationId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ALSN.Domain.Entities.Translator.Translator", "translators")
-                        .WithOne("OrderAssign")
-                        .HasForeignKey("ALSN.Domain.Entities.TranslationOffice.Order.OrderAssign", "TranslatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("ALSN.Domain.Entities.Translator.Translators", "translators")
+                        .WithMany()
+                        .HasForeignKey("TranslatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("translation");
@@ -805,21 +944,21 @@ namespace ALSN.Infrastructure.Migrations
 
             modelBuilder.Entity("ALSN.Domain.Entities.TranslationOffice.TranslOfficeDetails", b =>
                 {
-                    b.HasOne("ALSN.Domain.Entities.TranslationOffice.TranslOffice", "transOffices")
+                    b.HasOne("ALSN.Domain.Entities.TranslationOffice.TranslOffice", "transOffice")
                         .WithMany()
-                        .HasForeignKey("transOfficesOfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("TranslOfficeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("transOffices");
+                    b.Navigation("transOffice");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Translator.BankDetails", b =>
                 {
-                    b.HasOne("ALSN.Domain.Entities.Translator.Translator", "translator")
+                    b.HasOne("ALSN.Domain.Entities.Translator.Translators", "translator")
                         .WithMany()
-                        .HasForeignKey("TranslatorId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("TranslatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("translator");
@@ -827,9 +966,10 @@ namespace ALSN.Infrastructure.Migrations
 
             modelBuilder.Entity("ALSN.Domain.Entities.Translator.Language", b =>
                 {
-                    b.HasOne("ALSN.Domain.Entities.Translator.Translator", null)
+                    b.HasOne("ALSN.Domain.Entities.Translator.Translators", null)
                         .WithMany("languages")
-                        .HasForeignKey("TranslatorId");
+                        .HasForeignKey("TranslatorsId")
+                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Translator.Orders.AcceptedOrders", b =>
@@ -837,18 +977,18 @@ namespace ALSN.Infrastructure.Migrations
                     b.HasOne("ALSN.Domain.Entities.Guest.Translation.Translation", "translation")
                         .WithMany()
                         .HasForeignKey("TranslationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ALSN.Domain.Entities.Translator.Translator", "translator")
+                    b.HasOne("ALSN.Domain.Entities.Translator.Translators", "translators")
                         .WithMany()
-                        .HasForeignKey("TranslatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("translatorId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("translation");
 
-                    b.Navigation("translator");
+                    b.Navigation("translators");
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Translator.Orders.RejectOrder", b =>
@@ -856,49 +996,83 @@ namespace ALSN.Infrastructure.Migrations
                     b.HasOne("ALSN.Domain.Entities.Guest.Translation.Translation", "translation")
                         .WithMany()
                         .HasForeignKey("TranslationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("translation");
                 });
 
-            modelBuilder.Entity("ALSN.Domain.Entities.Translator.Translator", b =>
+            modelBuilder.Entity("ALSN.Domain.Entities.User.Coupons.Coupons", b =>
+                {
+                    b.HasOne("ALSN.Domain.Entities.User.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
+                {
+                    b.HasOne("ALSN.Domain.Entities.User.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
+                {
+                    b.HasOne("ALSN.Domain.Entities.User.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ALSN.Domain.Entities.User.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
+                {
+                    b.HasOne("ALSN.Domain.Entities.User.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("ALSN.Domain.Entities.Translator.Translators", b =>
                 {
                     b.HasOne("ALSN.Domain.Entities.TranslationOffice.TranslOffice", "TranslOffice")
                         .WithMany()
-                        .HasForeignKey("TranslOfficeOfficeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasForeignKey("TransOfficeId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("TranslOffice");
-                });
-
-            modelBuilder.Entity("ALSN.Domain.Entities.User.Coupons.Coupons", b =>
-                {
-                    b.HasOne("ALSN.Domain.Entities.User.User", "users")
-                        .WithMany()
-                        .HasForeignKey("usersUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("users");
-                });
-
-            modelBuilder.Entity("ALSN.Domain.Entities.User.User", b =>
-                {
-                    b.HasOne("ALSN.Domain.Entities.User.Role", "Roles")
-                        .WithMany()
-                        .HasForeignKey("RolesRoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Roles");
-                });
-
-            modelBuilder.Entity("ALSN.Domain.Entities.Documents.TranslationPrice", b =>
-                {
-                    b.Navigation("DocumentsType")
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("ALSN.Domain.Entities.Guest.Guest", b =>
@@ -906,23 +1080,8 @@ namespace ALSN.Infrastructure.Migrations
                     b.Navigation("Tickets");
                 });
 
-            modelBuilder.Entity("ALSN.Domain.Entities.Guest.Translation.Translation", b =>
+            modelBuilder.Entity("ALSN.Domain.Entities.Translator.Translators", b =>
                 {
-                    b.Navigation("OrderAssign")
-                        .IsRequired();
-
-                    b.Navigation("feedback")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("ALSN.Domain.Entities.Translator.Translator", b =>
-                {
-                    b.Navigation("OrderAssign")
-                        .IsRequired();
-
-                    b.Navigation("feedback")
-                        .IsRequired();
-
                     b.Navigation("languages");
                 });
 #pragma warning restore 612, 618

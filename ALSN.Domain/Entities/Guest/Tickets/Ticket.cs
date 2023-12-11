@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,8 @@ namespace ALSN.Domain.Entities.Guest.Tickets
         public DateTime CreatedAt { get; set; }
 
         // Navigation props
-        public int GuestId { get; set; }
+        [ForeignKey("Guest")]
+        public string GuestId { get; set; }
         public Guest Guest { get; set; }
     }
 }

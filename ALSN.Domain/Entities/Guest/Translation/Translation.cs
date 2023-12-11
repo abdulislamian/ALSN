@@ -1,6 +1,7 @@
 ﻿using ALSN.Domain.Entities.Documents;
 using ALSN.Domain.Entities.TranslationOffice.Order;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using static ALSN.Application.Common.Utility.SD;
 
 namespace ALSN.Domain.Entities.Guest.Translation
@@ -33,16 +34,19 @@ namespace ALSN.Domain.Entities.Guest.Translation
         public bool IsCertificationOfDocument { get; set; }
 
         // Navi props
-        public int GuestId { get; set; }
+        [ForeignKey("Guest")]
+        public string GuestId { get; set; }
         public Guest Guest { get; set; }
+        
+        [ForeignKey("translationPrice")]
         public int TranslationPriceId { get; set; }
         public TranslationPrice translationPrice { get; set; }
         
 
         //nav prp for feedbck
-        public Feedback feedback { get; set; }
+        //public Feedback feedback { get; set; }
         //forAsignORdr
-        public OrderAssign OrderAssign { get; set; }
+        //public OrderAssign OrderAssign { get; set; }
 
     }
 }

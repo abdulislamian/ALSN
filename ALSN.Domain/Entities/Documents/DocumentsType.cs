@@ -10,13 +10,13 @@ namespace ALSN.Domain.Entities.Documents
     public class DocumentsType
     {
         [Key]
-        public int DocTypeId { get; set; }
+        public int Id { get; set; }
         public string documentName { get; set; }
         public bool isFixedPrice { get; set; }
         public int price { get; set; }
         public bool isActive { get; set; }
 
         //nav
-        public TranslationPrice TranslationPrice { get; set; }
+        //public TranslationPrice TranslationPrice { get; set; }
     }
 }

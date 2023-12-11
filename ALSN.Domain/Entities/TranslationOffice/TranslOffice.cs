@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ALSN.Domain.Entities.Translator;
+using ALSN.Domain.Entities.User;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,16 +9,18 @@ using System.Threading.Tasks;
 
 namespace ALSN.Domain.Entities.TranslationOffice
 {
-    public class TranslOffice
+    public class TranslOffice : ApplicationUser
     {
-        [Key]
-        public int OfficeId { get; set; }
+        //[Key]
+        //public int OfficeId { get; set; }
         public string CompanyName { get; set; }
         public string CompOwnerName { get; set; }
         public string City { get; set; }
-        public string ContactNo { get; set; }
-        public string Email { get;set; }
-        public string LocalizationLanguage { get; set; }
+        //public string ContactNo { get; set; }
+        //public string Email { get;set; }
+        //public string LocalizationLanguage { get; set; }
         public int TotalNoOfTranslators { get; set; }
+
+        //public Translators translator { get; set; }
     }
 }
