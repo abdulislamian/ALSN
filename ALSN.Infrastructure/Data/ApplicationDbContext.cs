@@ -1,5 +1,6 @@
 ﻿using ALSN.Domain.Entities.Documents;
 using ALSN.Domain.Entities.Guest;
+using ALSN.Domain.Entities.Guest.Payment;
 using ALSN.Domain.Entities.Guest.Tickets;
 using ALSN.Domain.Entities.Guest.Translation;
 using ALSN.Domain.Entities.TranslationOffice;
@@ -28,7 +29,10 @@ namespace ALSN.Infrastructure.Data
         public DbSet<Address> Address { get; set; }
         public DbSet<DocumentsType> DocumentsType { get; set; }
         public DbSet<TranslationPrice> translationPrice { get; set; }
-        //public DbSet<ServiceCategory> serviceCategory { get; set; }
+        public DbSet<ServiceCategory> serviceCategory { get; set; }
+        public DbSet<Payment> payments { get; set; }
+        public DbSet<PaymentDetails> paymentDetails { get; set; }
+        public DbSet<Chats> chats { get; set; }
         public DbSet<Coupons> Coupons { get; set; }
         public DbSet<Ticket> tickets { get; set; }
         public DbSet<Feedback> feedback { get; set; }
